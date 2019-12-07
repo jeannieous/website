@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Jeannie Hong" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 2</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/blog/project2/">Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level3">
+<h3>0) Introduction</h3>
+<p>The dataset that I have chosen for this project is the Fitness Trends dataset (25.csv), which was found on kaggle.com. It contains 7 variables (date, step_count, mood, calories_burned, hours_of_sleep, bool_of_active, weight_kg) and 96 observations. The dataset gives information about feeling active based on number of steps walked, mood, calories burned, hourse of sleep, and weight. I thought this dataset was interesting to look at since excersing is often used as a treatment for people who feel lethargic. I expect that number of steps and weight is a significant predictor of feeling active.</p>
+</div>
+<div id="manova" class="section level3">
+<h3>1) Manova</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+library(lmtest)
+library(sandwich)
+workout&lt;-read_csv(&quot;25.csv&quot;)
+workout&lt;-workout%&gt;%dplyr::select(-date)
+workout&lt;-workout%&gt;%dplyr::rename(step=step_count, calorie=calories_burned, sleep=hours_of_sleep, 
+activity=bool_of_active, weight=weight_kg)
+workout$mood[workout$mood %in% 300] &lt;- &quot;happy&quot;                 
+workout$mood[workout$mood %in% 200] &lt;- &quot;neutral&quot;    
+workout$mood[workout$mood %in% 100] &lt;- &quot;sad&quot;    
+workout$activity[workout$activity %in% 500] &lt;- &quot;active&quot;   
+workout$activity[workout$activity %in% 0] &lt;- &quot;inactive&quot; 
+glimpse(workout)</code></pre>
+<pre><code>## Observations: 96
+## Variables: 6
+## $ step &lt;dbl&gt; 5464, 6041, 25, 5461, 6915, 4545, 4340,
+1230, 61, 1258, 3148, 4687, 4732, 3519...
+## $ mood &lt;chr&gt; &quot;neutral&quot;, &quot;sad&quot;, &quot;sad&quot;, &quot;sad&quot;, &quot;neutral&quot;,
+&quot;sad&quot;, &quot;sad&quot;, &quot;sad&quot;, &quot;sad&quot;, &quot;sad&quot;, ...
+## $ calorie &lt;dbl&gt; 181, 197, 0, 174, 223, 149, 140, 38, 1,
+40, 101, 152, 150, 113, 49, 86, 6, 99,...
+## $ sleep &lt;dbl&gt; 5, 8, 5, 4, 5, 6, 6, 7, 5, 6, 8, 5, 6, 7,
+5, 6, 8, 5, 4, 5, 6, 8, 5, 6, 5, 8, ...
+## $ activity &lt;chr&gt; &quot;inactive&quot;, &quot;inactive&quot;, &quot;inactive&quot;,
+&quot;inactive&quot;, &quot;active&quot;, &quot;inactive&quot;, &quot;inactiv...
+## $ weight &lt;dbl&gt; 66, 66, 66, 66, 66, 66, 66, 66, 66, 65,
+65, 65, 65, 65, 65, 65, 65, 65, 64, 64...</code></pre>
+<pre class="r"><code>#MANOVA
+man1 &lt;- manova(cbind(step, calorie, sleep, weight) ~ mood, data = workout) 
+summary(man1)</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## mood 2 0.46428 6.8777 8 182 6.805e-08 ***
+## Residuals 93
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>#ANOVA
+summary.aov(man1)</code></pre>
+<pre><code>## Response step :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## mood 2 29743891 14871946 3.4008 0.03755 *
+## Residuals 93 406695365 4373068
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response calorie :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## mood 2 29058 14529.2 2.9503 0.05724 .
+## Residuals 93 457991 4924.6
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response sleep :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## mood 2 19.466 9.7329 4.5499 0.01303 *
+## Residuals 93 198.941 2.1391
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response weight :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## mood 2 8.5641 4.2820 13.807 5.616e-06 ***
+## Residuals 93 28.8422 0.3101
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>#t tests
+pairwise.t.test(workout$step, workout$mood, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  workout$step and workout$mood 
+## 
+##         happy neutral
+## neutral 0.647 -      
+## sad     0.013 0.063  
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(workout$sleep, workout$mood, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  workout$sleep and workout$mood 
+## 
+##         happy  neutral
+## neutral 0.0046 -      
+## sad     0.0559 0.3495 
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(workout$weight, workout$mood, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  workout$weight and workout$mood 
+## 
+##         happy   neutral
+## neutral 0.25111 -      
+## sad     1.5e-06 0.00048
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>#Probability of making at least one type I error
+1 - 0.95^14</code></pre>
+<pre><code>## [1] 0.512325</code></pre>
+<pre class="r"><code>#Bonferroni correction
+0.05/14</code></pre>
+<pre><code>## [1] 0.003571429</code></pre>
+<pre class="r"><code>#Assumptions (multivariate normality)
+ggplot(workout, aes(x=weight,y=sleep))+geom_point(alpha=.5)+geom_density_2d(h=2)+
+  coord_fixed()+facet_wrap(~mood)</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-1-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Assumptions (homogeneity of covariances)
+workout1&lt;-workout%&gt;%dplyr::select(step,mood,calorie,activity,weight,sleep)
+covmats&lt;-workout1%&gt;%group_by(mood)%&gt;%do(covs=cov(.[5:6]))
+for(i in 1:3){print(covmats$covs[i])}</code></pre>
+<pre><code>## [[1]]
+##             weight       sleep
+## weight 0.025000000 0.007051282
+## sleep  0.007051282 2.204487179
+## 
+## [[1]]
+##            weight      sleep
+## weight 0.31054131 0.06410256
+## sleep  0.06410256 1.53846154
+## 
+## [[1]]
+##           weight     sleep
+## weight 0.7068966 0.7598522
+## sleep  0.7598522 2.6059113</code></pre>
+<p>Since our p-value from manova (6.805e-08) is less than 0.05, there is at least one variable that has significant mean difference across level of “mood”. The univariate ANOVA shows that step (p=0.03755), sleep (p=0.01303), and weight (p=5.616e-06) have mean difference across “mood”. Post-hoc t tests show that for mean step, happy and sad differ. For mean sleep, happy and neutral differ. For mean weight, happpy and sad differ, and neutral and sad differ. Overall, 1 MANOVA test, 4 ANOVA tests, and 9 t tests were performed for a total of 14 tests. The probability of making at least one type I error is 0.512325. To keep the overall type I error rate at .05, significance level was adjusted (bonferroni correction) to be 0.003571429. After the adjustment, happy and sad from post hoc test for step and happy and neutral from post hoc test for sleep were no longer significant. There are various assumptions for MANOVA, and most of them are not met. For example, MANOVA assumes multivariate normality, but the gglot of weight and sleep shows that this is not likely. Also, there seems to be a lack of homogeneity of covaraiances for weight and sleep. Although these assumptions are not met, it is not surprising since it is very difficault to meet all assumptions.</p>
+</div>
+<div id="randomization-test" class="section level3">
+<h3>2) Randomization test</h3>
+<pre class="r"><code>wow&lt;-workout%&gt;%dplyr::select(activity,step)
+
+wow%&gt;%group_by(activity)%&gt;%summarise(means=mean(step))%&gt;%summarise(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1        -517.</code></pre>
+<pre class="r"><code>rand_dist&lt;-vector()
+for(i in 1:5000){
+  umm&lt;-data.frame(step=sample(wow$step),activity=wow$activity) 
+  rand_dist[i]&lt;-mean(umm[umm$activity==&quot;active&quot;,]$step)-
+    mean(umm[umm$activity==&quot;inactive&quot;,]$step)}
+mean(rand_dist&gt;-516.6825)*2</code></pre>
+<pre><code>## [1] 1.756</code></pre>
+<pre class="r"><code>{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;);abline(v=-516.6825 ,col=&quot;red&quot;)}</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Null hypothesis: mean step count is same for feeling active vs. inactive.</p>
+<p>Alternative hypothesis: mean step count is different for active vs. inactive.</p>
+<p>Since the p-value (1.7616) is greater than 0.05, we fail to reject the null. This means that there is sufficient evidence to say that the mean step count is the same for feeling active and inactive.</p>
+</div>
+<div id="linear-regression-model" class="section level3">
+<h3>3) Linear Regression Model</h3>
+<pre class="r"><code>workout$calorie_c&lt;-workout$calorie-mean(workout$calorie)
+workout$weight_c&lt;-workout$weight-mean(workout$weight)
+yay&lt;- lm(sleep~weight_c*calorie_c, data=workout)
+summary(yay)</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = sleep ~ weight_c * calorie_c, data =
+workout)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -3.1641 -0.9996 -0.1491 0.7488 3.7929
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 5.228708 0.154621 33.816 &lt;2e-16 ***
+## weight_c 0.479362 0.255548 1.876 0.0639 .
+## calorie_c 0.001309 0.002174 0.602 0.5486
+## weight_c:calorie_c -0.001996 0.003187 -0.626 0.5326
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Residual standard error: 1.507 on 92 degrees of freedom
+## Multiple R-squared: 0.04343, Adjusted R-squared: 0.01224
+## F-statistic: 1.392 on 3 and 92 DF, p-value: 0.2501</code></pre>
+<pre class="r"><code>#Graph
+yay1&lt;-workout
+yay1$weight_c&lt;-mean(workout$weight_c)
+yay1$mean&lt;-predict(yay,yay1)
+yay1$weight_c&lt;-mean(workout$weight_c)+sd(workout$weight_c)
+yay1$plus.sd&lt;-predict(yay,yay1)
+yay1$weight_c&lt;-mean(workout$weight_c)-sd(workout$weight_c)
+yay1$minus.sd&lt;-predict(yay,yay1)
+newint&lt;-yay1%&gt;%dplyr::select(sleep,calorie_c,mean,plus.sd,minus.sd)%&gt;%
+  gather(weight,value,-sleep,-calorie_c)
+
+mycols&lt;-c(&quot;#619CFF&quot;,&quot;#F8766D&quot;,&quot;#00BA38&quot;)
+names(mycols)&lt;-c(&quot;-1 sd&quot;,&quot;mean&quot;,&quot;+1 sd&quot;)
+mycols=as.factor(mycols)
+
+ggplot(workout,aes(calorie_c,sleep),group=mycols)+geom_point()+
+  geom_line(data=yay1,aes(y=mean,color=&quot;mean&quot;))+
+  geom_line(data=yay1,aes(y=plus.sd,color=&quot;+1 sd&quot;))+
+  geom_line(data=yay1,aes(y=minus.sd,color=&quot;-1 sd&quot;))+
+  scale_color_manual(values=mycols)+labs(color=&quot;weight (cont)&quot;)+
+  theme(legend.position=c(.9,.2))</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Assumptions (linearity, homoskedasticity, normality)
+resids&lt;-yay$residuals; fitvals&lt;-yay$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col=&quot;red&quot;)</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>bptest(yay)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  yay
+## BP = 1.8712, df = 3, p-value = 0.5996</code></pre>
+<pre class="r"><code>ggplot()+geom_histogram(aes(resids),bins=20)</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-3-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color=&#39;red&#39;)</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-3-4.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#uncorrected SEs
+coeftest(yay)[,1:2]</code></pre>
+<pre><code>##                        Estimate  Std. Error
+## (Intercept)         5.228707674 0.154621119
+## weight_c            0.479361778 0.255547902
+## calorie_c           0.001308541 0.002173620
+## weight_c:calorie_c -0.001996083 0.003186756</code></pre>
+<pre class="r"><code>#corrected SE
+coeftest(yay, vcov=vcovHC(yay))[,1:2]</code></pre>
+<pre><code>##                        Estimate  Std. Error
+## (Intercept)         5.228707674 0.157006462
+## weight_c            0.479361778 0.258622510
+## calorie_c           0.001308541 0.002100036
+## weight_c:calorie_c -0.001996083 0.003488822</code></pre>
+<p>The coefficient estimate of intercept is 5.228708, which represents hours of sleep when weight_c and calorie_c is 0. The coefficient of weight_c is 0.479362, which means controlling for other variables, 1 kg increase in weight_c would increase sleep by 0.479362 hours. The coefficient of calorie_c is 0.001309, which means controlling for other variables, 1 kcal increase in calorie_c would increase sleep by 0.001309 hours. The coefficient of weight_c:calorie_c is -0.001996, which means that for 1kg increase in weight_c, the slope of calorie_c on sleep decreases by -0.001996. The interaction plot shows that there is no significant interaction since it is close to parallel. Looking at the gglot, linearity and homoskedasticity looks okay. Since the p-value (0.5996) from bptest is greater that 0.05, homoskedasticity is met. Based on the graphs, normality does not look great. Comparing the uncorrected SEs and robust SEs, the standard errors increased slightly for intercept, weight_c, and weight_c:calorie_c after correction. This means that the p-value increase slightly for these. The standard error for calorie_c decreased slightly after correction, which means that the p-value also decreased slightly. The proportion of variation in the outcome explained by the model is 0.04343.</p>
+</div>
+<div id="bootstrapped-standard-errors" class="section level3">
+<h3>4) Bootstrapped standard errors</h3>
+<pre class="r"><code>samp_distn&lt;-replicate(5000, {
+  boot_dat&lt;-boot_dat&lt;-workout[sample(nrow(workout),replace=TRUE),]
+  yay2&lt;-lm(sleep ~ weight_c * calorie_c, data=boot_dat)
+  coef(yay2)
+})
+samp_distn%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) weight_c   calorie_c weight_c:calorie_c
+## 1   0.1536471 0.255826 0.002077116        0.003631352</code></pre>
+<p>Comparing to the origincal SEs, the bootstrapped SEs decreased for the intercept term and calorie_c, and the bootstrapped SEs increased for the weight_c and weight_c:calorie_c. If the SE increased, the p-value also increased, and if the SE decreased, the p-value also decreased. Comparing to the robust SEs, the bootstrapped SEs decreased for the intercept term, and the bootstrapped SEs increased for the weight_c, calorie_c, and weight_c:calorie_c. If the SE increased, the p-value also increased, and if the SE decreased, the p-value also decreased.</p>
+</div>
+<div id="logistic-regression" class="section level3">
+<h3>5) Logistic Regression</h3>
+<pre class="r"><code>workout&lt;-workout%&gt;% mutate(y = ifelse(activity == &quot;active&quot;, 1, 0))
+nice &lt;- glm(y ~ step + weight, data = workout, family = &quot;binomial&quot;) 
+coeftest(nice)</code></pre>
+<pre><code>##
+## z test of coefficients:
+##
+## Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) 91.58350368 35.18113739 2.6032 0.009236 **
+## step 0.00016319 0.00010568 1.5442 0.122543
+## weight -1.43775219 0.54919185 -2.6179 0.008846 **
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>probb &lt;- predict(nice, newdata = workout, type = &quot;response&quot;) 
+predd &lt;- ifelse(probb &gt; 0.5, 1, 0) 
+exp(91.58350368)</code></pre>
+<pre><code>## [1] 5.9458e+39</code></pre>
+<pre class="r"><code>exp(0.00016319)</code></pre>
+<pre><code>## [1] 1.000163</code></pre>
+<pre class="r"><code>exp(-1.43775219)</code></pre>
+<pre><code>## [1] 0.2374609</code></pre>
+<pre class="r"><code>#Confusion matrix
+table(truth = workout$y, prediction = predd) %&gt;% addmargins()</code></pre>
+<pre><code>##      prediction
+## truth  0  1 Sum
+##   0   38 16  54
+##   1   19 23  42
+##   Sum 57 39  96</code></pre>
+<pre class="r"><code>#Accuracy
+(23+38)/96</code></pre>
+<pre><code>## [1] 0.6354167</code></pre>
+<pre class="r"><code>#TPR
+23/42</code></pre>
+<pre><code>## [1] 0.547619</code></pre>
+<pre class="r"><code>#TNR
+38/54</code></pre>
+<pre><code>## [1] 0.7037037</code></pre>
+<pre class="r"><code>#PPV
+23/39</code></pre>
+<pre><code>## [1] 0.5897436</code></pre>
+<pre class="r"><code>#Density of log-odds
+fitt&lt;-glm(y~step+weight, data = workout, family=binomial(link=&quot;logit&quot;))
+workout$logit&lt;-predict(fitt)
+ggplot(workout,aes(logit, fill=activity))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2)</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#ROC, AUC
+library(plotROC)
+ROCplot &lt;- ggplot(workout)+geom_roc(aes(d=y, m=probb), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="/blog/Project2_files/figure-html/unnamed-chunk-5-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.6728395</code></pre>
+<pre class="r"><code>#10-fold CV
+class_diag&lt;-function(probs,truth){
+  
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+
+set.seed(1234) 
+k = 10
+data1 &lt;- workout[sample(nrow(workout)), ] 
+folds &lt;- cut(seq(1:nrow(workout)), breaks = k, labels = F)
+
+diags &lt;- NULL 
+  for (i in 1:k) { 
+    train &lt;- data1[folds != i, ] 
+    test &lt;- data1[folds == i, ] 
+    truth &lt;- test$y
+    
+    fits &lt;- glm(y~step+weight, data=train, family = &quot;binomial&quot;) 
+    probs &lt;- predict(fits, newdata=test, type = &quot;response&quot;)
+    diags &lt;- rbind(diags, class_diag(probs, truth))
+} 
+apply(diags, 2, mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.5911111 0.4728571 0.7048810 0.5266667 0.6677222</code></pre>
+<p>For 0 step and 0 weight, the odds of being active is 5.9458e+39. Controlling for weight, for every 1 unit increase in step, odds of being active chage by a factor of 1.000163. Controlling for step, for every 1 kg increase in weight, odds of being active change by a factor of 0.2374609. The accuracy is 0.6354167, the TPR is 0.547619, the TNR is 0.7037037, and the PPV is 0.5897436. The accuracy does not seem great. The AUC is 0.6728395, which means that this model is not very good at predicting activity. After doing 10-fold CV, the accuracy is 0.5866667, the TPR is 0.5135714, the TNR is 0.6461905, and the PPV is 0.5671429. The AUC decreased slightly to 0.6693810. Since this was not a big change, there isn’t much overfitting.</p>
+</div>
+<div id="lasso" class="section level3">
+<h3>6) LASSO</h3>
+<pre class="r"><code>library(glmnet)
+workoutori&lt;-workout%&gt;%dplyr::select(c(1,2,3,4,6,9))
+workoutori&lt;-workoutori%&gt;%dplyr::rename(act=y)
+fitwow&lt;-glm(act~-1+step+mood+calorie+sleep+weight, data=workoutori, family=&quot;binomial&quot;)
+x&lt;-model.matrix(fitwow)
+x&lt;-scale(x)
+y&lt;-as.matrix(workoutori$act)
+
+cv&lt;-cv.glmnet(x,y,family=&quot;binomial&quot;)
+lasso&lt;-glmnet(x,y,family=&quot;binomial&quot;,lambda=cv$lambda.1se)
+coef(lasso) </code></pre>
+<pre><code>## 8 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                     s0
+## (Intercept) -0.2543007
+## step         .        
+## moodhappy    .        
+## moodneutral  .        
+## moodsad     -0.1993294
+## calorie      .        
+## sleep        .        
+## weight       .</code></pre>
+<pre class="r"><code>workoutori$moodsad=ifelse(workoutori$mood==&quot;sad&quot;, 1,0)
+workk&lt;-workoutori%&gt;%dplyr::select(moodsad,act)
+
+set.seed(1234)
+k=10
+
+dataa&lt;-workk[sample(nrow(workk)),] 
+folds&lt;-cut(seq(1:nrow(workk)),breaks=k,labels=F) 
+
+diags&lt;-NULL
+for(i in 1:k){
+  train&lt;-dataa[folds!=i,] 
+  test&lt;-dataa[folds==i,]
+  truth&lt;-test$act
+  
+  fit&lt;-glm(act~.,data=train,family=&quot;binomial&quot;)
+  probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+  
+  diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+
+diags%&gt;%summarize_all(mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.6533333 0.8880952 0.4672619 0.5728175 0.6776786</code></pre>
+<p>The only significant variable from lasso was moodsad. After doing lasso, the accuracy is 0.6577778, the TPR is 0.88, the TNR is 0.4689286, and the PPV is 0.558254. The accuracy increased slightly from 0.6354167 to 0.6577778.The AUC increased slightly to 0.6744643. Since the AUC increased, this model gives better prediction than full model, but it is only a slight increase.</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

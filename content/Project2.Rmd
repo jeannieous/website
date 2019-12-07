@@ -1,0 +1,276 @@
+---
+title: 'Project 2'
+author: "Jeannie Hong"
+date: 2019-11-24
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+```
+
+### 0) Introduction
+
+The dataset that I have chosen for this project is the Fitness Trends dataset (25.csv), which was found on kaggle.com. It contains 7 variables (date, step_count, mood, calories_burned, hours_of_sleep, bool_of_active, weight_kg) and 96 observations. The dataset gives information about feeling active based on number of steps walked, mood, calories burned, hourse of sleep, and weight. I thought this dataset was interesting to look at since excersing is often used as a treatment for people who feel lethargic. I expect that number of steps and weight is a significant predictor of feeling active. 
+
+### 1) Manova
+
+```{R}
+library(tidyverse)
+library(readr)
+library(lmtest)
+library(sandwich)
+workout<-read_csv("25.csv")
+workout<-workout%>%dplyr::select(-date)
+workout<-workout%>%dplyr::rename(step=step_count, calorie=calories_burned, sleep=hours_of_sleep, 
+activity=bool_of_active, weight=weight_kg)
+workout$mood[workout$mood %in% 300] <- "happy"                 
+workout$mood[workout$mood %in% 200] <- "neutral"    
+workout$mood[workout$mood %in% 100] <- "sad"    
+workout$activity[workout$activity %in% 500] <- "active"   
+workout$activity[workout$activity %in% 0] <- "inactive" 
+glimpse(workout)
+
+#MANOVA
+man1 <- manova(cbind(step, calorie, sleep, weight) ~ mood, data = workout) 
+summary(man1)
+#ANOVA
+summary.aov(man1)
+#t tests
+pairwise.t.test(workout$step, workout$mood, p.adj="none")
+pairwise.t.test(workout$sleep, workout$mood, p.adj="none")
+pairwise.t.test(workout$weight, workout$mood, p.adj="none")
+#Probability of making at least one type I error
+1 - 0.95^14
+#Bonferroni correction
+0.05/14
+#Assumptions (multivariate normality)
+ggplot(workout, aes(x=weight,y=sleep))+geom_point(alpha=.5)+geom_density_2d(h=2)+
+  coord_fixed()+facet_wrap(~mood)
+#Assumptions (homogeneity of covariances)
+workout1<-workout%>%dplyr::select(step,mood,calorie,activity,weight,sleep)
+covmats<-workout1%>%group_by(mood)%>%do(covs=cov(.[5:6]))
+for(i in 1:3){print(covmats$covs[i])}
+```
+Since our p-value from manova (6.805e-08) is less than 0.05, there is at least one variable that has significant mean difference across level of "mood". The univariate ANOVA shows that step (p=0.03755), sleep (p=0.01303), and weight (p=5.616e-06) have mean difference across "mood". Post-hoc t tests show that for mean step, happy and sad differ. For mean sleep, happy and neutral differ. For mean weight, happpy and sad differ, and neutral and sad differ. Overall, 1 MANOVA test, 4 ANOVA tests, and 9 t tests were performed for a total of 14 tests. The probability of making at least one type I error is 0.512325. To keep the overall type I error rate at .05, significance level was adjusted (bonferroni correction) to be 0.003571429. After the adjustment, happy and sad from post hoc test for step and happy and neutral from post hoc test for sleep were no longer significant. There are various assumptions for MANOVA, and most of them are not met. For example, MANOVA assumes multivariate normality, but the gglot of weight and sleep shows that this is not likely. Also, there seems to be a lack of homogeneity of covaraiances for weight and sleep. Although these assumptions are not met, it is not surprising since it is very difficault to meet all assumptions. 
+
+### 2) Randomization test
+
+```{R}
+wow<-workout%>%dplyr::select(activity,step)
+
+wow%>%group_by(activity)%>%summarise(means=mean(step))%>%summarise(`mean_diff:`=diff(means))
+
+rand_dist<-vector()
+for(i in 1:5000){
+  umm<-data.frame(step=sample(wow$step),activity=wow$activity) 
+  rand_dist[i]<-mean(umm[umm$activity=="active",]$step)-
+    mean(umm[umm$activity=="inactive",]$step)}
+mean(rand_dist>-516.6825)*2
+
+{hist(rand_dist,main="",ylab="");abline(v=-516.6825	,col="red")}
+```
+
+Null hypothesis: mean step count is same for feeling active vs. inactive.
+
+Alternative hypothesis: mean step count is different for active vs. inactive.
+
+Since the p-value (1.7616) is greater than 0.05, we fail to reject the null. This means that there is sufficient evidence to say that the mean step count is the same for feeling active and inactive.
+
+### 3) Linear Regression Model
+
+```{R}
+workout$calorie_c<-workout$calorie-mean(workout$calorie)
+workout$weight_c<-workout$weight-mean(workout$weight)
+yay<- lm(sleep~weight_c*calorie_c, data=workout)
+summary(yay)
+
+#Graph
+yay1<-workout
+yay1$weight_c<-mean(workout$weight_c)
+yay1$mean<-predict(yay,yay1)
+yay1$weight_c<-mean(workout$weight_c)+sd(workout$weight_c)
+yay1$plus.sd<-predict(yay,yay1)
+yay1$weight_c<-mean(workout$weight_c)-sd(workout$weight_c)
+yay1$minus.sd<-predict(yay,yay1)
+newint<-yay1%>%dplyr::select(sleep,calorie_c,mean,plus.sd,minus.sd)%>%
+  gather(weight,value,-sleep,-calorie_c)
+
+mycols<-c("#619CFF","#F8766D","#00BA38")
+names(mycols)<-c("-1 sd","mean","+1 sd")
+mycols=as.factor(mycols)
+
+ggplot(workout,aes(calorie_c,sleep),group=mycols)+geom_point()+
+  geom_line(data=yay1,aes(y=mean,color="mean"))+
+  geom_line(data=yay1,aes(y=plus.sd,color="+1 sd"))+
+  geom_line(data=yay1,aes(y=minus.sd,color="-1 sd"))+
+  scale_color_manual(values=mycols)+labs(color="weight (cont)")+
+  theme(legend.position=c(.9,.2))
+
+#Assumptions (linearity, homoskedasticity, normality)
+resids<-yay$residuals; fitvals<-yay$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, col="red")
+bptest(yay)
+ggplot()+geom_histogram(aes(resids),bins=20)
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids), color='red')
+
+#uncorrected SEs
+coeftest(yay)[,1:2]
+#corrected SE
+coeftest(yay, vcov=vcovHC(yay))[,1:2]
+```
+
+The coefficient estimate of intercept is 5.228708, which represents hours of sleep when weight_c and calorie_c is 0. The coefficient of weight_c is 0.479362, which means controlling for other variables, 1 kg increase in weight_c would increase sleep by 0.479362 hours. The coefficient of calorie_c is 0.001309, which means controlling for other variables, 1 kcal increase in calorie_c would increase sleep by 0.001309 hours. The coefficient of weight_c:calorie_c is -0.001996, which means that for 1kg increase in weight_c, the slope of calorie_c on sleep decreases by -0.001996. The interaction plot shows that there is no significant interaction since it is close to parallel. Looking at the gglot, linearity and homoskedasticity looks okay. Since the p-value (0.5996) from bptest is greater that 0.05, homoskedasticity is met. Based on the graphs, normality does not look great. Comparing the uncorrected SEs and robust SEs, the standard errors increased slightly for intercept, weight_c, and weight_c:calorie_c after correction. This means that the p-value increase slightly for these. The standard error for calorie_c decreased slightly after correction, which means that the p-value also decreased slightly. The proportion of variation in the outcome explained by the model is 0.04343.
+
+### 4) Bootstrapped standard errors
+
+```{R}
+samp_distn<-replicate(5000, {
+  boot_dat<-boot_dat<-workout[sample(nrow(workout),replace=TRUE),]
+  yay2<-lm(sleep ~ weight_c * calorie_c, data=boot_dat)
+  coef(yay2)
+})
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+```
+
+Comparing to the origincal SEs, the bootstrapped SEs decreased for the intercept term and calorie_c, and the bootstrapped SEs increased for the weight_c and weight_c:calorie_c. If the SE increased, the p-value also increased, and if the SE decreased, the p-value also decreased. Comparing to the robust SEs, the bootstrapped SEs decreased for the intercept term, and the bootstrapped SEs increased for the weight_c, calorie_c, and weight_c:calorie_c. If the SE increased, the p-value also increased, and if the SE decreased, the p-value also decreased.    
+
+### 5) Logistic Regression
+
+```{R}
+workout<-workout%>% mutate(y = ifelse(activity == "active", 1, 0))
+nice <- glm(y ~ step + weight, data = workout, family = "binomial") 
+coeftest(nice)
+probb <- predict(nice, newdata = workout, type = "response") 
+predd <- ifelse(probb > 0.5, 1, 0) 
+exp(91.58350368)
+exp(0.00016319)
+exp(-1.43775219)
+#Confusion matrix
+table(truth = workout$y, prediction = predd) %>% addmargins()
+#Accuracy
+(23+38)/96
+#TPR
+23/42
+#TNR
+38/54
+#PPV
+23/39
+#Density of log-odds
+fitt<-glm(y~step+weight, data = workout, family=binomial(link="logit"))
+workout$logit<-predict(fitt)
+ggplot(workout,aes(logit, fill=activity))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2)
+#ROC, AUC
+library(plotROC)
+ROCplot <- ggplot(workout)+geom_roc(aes(d=y, m=probb), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+#10-fold CV
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+  
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+
+set.seed(1234) 
+k = 10
+data1 <- workout[sample(nrow(workout)), ] 
+folds <- cut(seq(1:nrow(workout)), breaks = k, labels = F)
+
+diags <- NULL 
+  for (i in 1:k) { 
+    train <- data1[folds != i, ] 
+    test <- data1[folds == i, ] 
+    truth <- test$y
+    
+    fits <- glm(y~step+weight, data=train, family = "binomial") 
+    probs <- predict(fits, newdata=test, type = "response")
+    diags <- rbind(diags, class_diag(probs, truth))
+} 
+apply(diags, 2, mean)
+```
+For 0 step and 0 weight, the odds of being active is 5.9458e+39. Controlling for weight, for every 1 unit increase in step, odds of being active chage by a factor of 1.000163. Controlling for step, for every 1 kg increase in weight, odds of being active change by a factor of  0.2374609. The accuracy is 0.6354167, the TPR is 0.547619, the TNR is 0.7037037, and the PPV is 0.5897436. The accuracy does not seem great. The AUC is 0.6728395, which means that this model is not very good at predicting activity. After doing 10-fold CV, the accuracy is 0.5866667, the TPR is 0.5135714, the TNR is 0.6461905, and the PPV is 0.5671429. The AUC decreased slightly to 0.6693810. Since this was not a big change, there isn't much overfitting. 
+
+### 6) LASSO
+
+```{R}
+library(glmnet)
+workoutori<-workout%>%dplyr::select(c(1,2,3,4,6,9))
+workoutori<-workoutori%>%dplyr::rename(act=y)
+fitwow<-glm(act~-1+step+mood+calorie+sleep+weight, data=workoutori, family="binomial")
+x<-model.matrix(fitwow)
+x<-scale(x)
+y<-as.matrix(workoutori$act)
+
+cv<-cv.glmnet(x,y,family="binomial")
+lasso<-glmnet(x,y,family="binomial",lambda=cv$lambda.1se)
+coef(lasso) 
+
+workoutori$moodsad=ifelse(workoutori$mood=="sad", 1,0)
+workk<-workoutori%>%dplyr::select(moodsad,act)
+
+set.seed(1234)
+k=10
+
+dataa<-workk[sample(nrow(workk)),] 
+folds<-cut(seq(1:nrow(workk)),breaks=k,labels=F) 
+
+diags<-NULL
+for(i in 1:k){
+  train<-dataa[folds!=i,] 
+  test<-dataa[folds==i,]
+  truth<-test$act
+  
+  fit<-glm(act~.,data=train,family="binomial")
+  probs<-predict(fit,newdata = test,type="response")
+  
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+diags%>%summarize_all(mean)
+```
+
+The only significant variable from lasso was moodsad. After doing lasso, the accuracy is 0.6577778, the TPR is 0.88, the TNR is 0.4689286, and the PPV is 0.558254. The accuracy increased slightly from 0.6354167 to 0.6577778.The AUC increased slightly to 0.6744643. Since the AUC increased, this model gives better prediction than full model, but it is only a slight increase. 

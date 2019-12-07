@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Jeannie Hong" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 1</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          October 17, 2019
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="introduction" class="section level3">
+<h3>0) Introduction</h3>
+<p>The two datasets that I have chosen for this project is the Global Suicide Data (MH_12) and World Happiness Report (X2015), which were both found on kaggle.com. The Global Suicide Data contains 6 variables (Country, Sex, 2015, 2010, 2005, 2000) and 549 observations. It gives you the age-adjusted suicide rate (per 100,000) in different countries based on year and sex. The World Happiness Report contains 12 variables (Country, Region, Happiness rank, Happiness score, Standard Error, Economy, Family, Health, Freedom, Trust, Generosity, Dystopia residual) and 158 observations. It gives you the happiness score of various countries and divides the score into different components that contribute to the happiness score. I thought these two datasets were interesting to look at since suicide and mental health is a issue of growing concern, and I wanted to examine how happiness plays a role in suicide rates. Suicide is becoming more and more common, and understanding factors that influence its rate can help us prevent unecessary deaths. I expect to see a stronge negative correlation between suicide rate and happiness score where low suicide rate is related to high happiness score.</p>
+</div>
+<div id="join" class="section level3">
+<h3>1) Join</h3>
+<pre class="r"><code>library(tidyverse)
+library(readr)
+MH_12 &lt;- read_csv(&quot;MH_12.csv&quot;)
+X2015 &lt;- read_csv(&quot;2015.csv&quot;)
+glimpse(MH_12)</code></pre>
+<pre><code>## Observations: 549
+## Variables: 6
+## $ Country &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Albania&quot;, &quot;Al...
+## $ Sex     &lt;chr&gt; &quot;Both sexes&quot;, &quot;Male&quot;, &quot;Female&quot;, &quot;Both sexes&quot;, &quot;Male&quot;, &quot;Fema...
+## $ `2015`  &lt;dbl&gt; 7.1, 10.9, 3.1, 3.8, 5.3, 2.4, 3.1, 5.0, 1.3, 25.9, 38.1, 1...
+## $ `2010`  &lt;dbl&gt; 7.0, 11.1, 2.8, 5.0, 7.3, 2.8, 3.4, 5.3, 1.4, 26.2, 38.8, 1...
+## $ `2005`  &lt;dbl&gt; 7.3, 11.7, 2.6, 6.5, 9.5, 3.6, 3.8, 5.4, 2.1, 25.6, 38.5, 1...
+## $ `2000`  &lt;dbl&gt; 6.7, 10.9, 2.3, 6.4, 9.8, 3.1, 3.5, 4.8, 2.3, 23.8, 36.3, 1...</code></pre>
+<pre class="r"><code>glimpse(X2015)</code></pre>
+<pre><code>## Observations: 158
+## Variables: 12
+## $ Country                         &lt;chr&gt; &quot;Switzerland&quot;, &quot;Iceland&quot;, &quot;Denmark&quot;...
+## $ Region                          &lt;chr&gt; &quot;Western Europe&quot;, &quot;Western Europe&quot;,...
+## $ `Happiness Rank`                &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, ...
+## $ `Happiness Score`               &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, ...
+## $ `Standard Error`                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880,...
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900,...
+## $ Family                          &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095,...
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521,...
+## $ Freedom                         &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973,...
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503,...
+## $ Generosity                      &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699,...
+## $ `Dystopia Residual`             &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531,...</code></pre>
+<pre class="r"><code>mine&lt;-inner_join(MH_12, X2015, by=&quot;Country&quot;)
+glimpse(mine)</code></pre>
+<pre><code>## Observations: 405
+## Variables: 17
+## $ Country                         &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afgh...
+## $ Sex                             &lt;chr&gt; &quot;Both sexes&quot;, &quot;Male&quot;, &quot;Female&quot;, &quot;Bo...
+## $ `2015`                          &lt;dbl&gt; 7.1, 10.9, 3.1, 3.8, 5.3, 2.4, 3.1,...
+## $ `2010`                          &lt;dbl&gt; 7.0, 11.1, 2.8, 5.0, 7.3, 2.8, 3.4,...
+## $ `2005`                          &lt;dbl&gt; 7.3, 11.7, 2.6, 6.5, 9.5, 3.6, 3.8,...
+## $ `2000`                          &lt;dbl&gt; 6.7, 10.9, 2.3, 6.4, 9.8, 3.1, 3.5,...
+## $ Region                          &lt;chr&gt; &quot;Southern Asia&quot;, &quot;Southern Asia&quot;, &quot;...
+## $ `Happiness Rank`                &lt;dbl&gt; 153, 153, 153, 95, 95, 95, 68, 68, ...
+## $ `Happiness Score`               &lt;dbl&gt; 3.575, 3.575, 3.575, 4.959, 4.959, ...
+## $ `Standard Error`                &lt;dbl&gt; 0.03084, 0.03084, 0.03084, 0.05013,...
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 0.31982, 0.31982, 0.31982, 0.87867,...
+## $ Family                          &lt;dbl&gt; 0.30285, 0.30285, 0.30285, 0.80434,...
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.30335, 0.30335, 0.30335, 0.81325,...
+## $ Freedom                         &lt;dbl&gt; 0.23414, 0.23414, 0.23414, 0.35733,...
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.09719, 0.09719, 0.09719, 0.06413,...
+## $ Generosity                      &lt;dbl&gt; 0.36510, 0.36510, 0.36510, 0.14272,...
+## $ `Dystopia Residual`             &lt;dbl&gt; 1.95210, 1.95210, 1.95210, 1.89894,...</code></pre>
+<p>I joined the dataset “MH_12” (Global Suicide Data) and “X2015” (World Happiness Report) using an inner_join because I wanted to analyze only the countries that had both the suicide data and the happiness data. Since I am interested in examining how suicide rates and happiness scores are related to each other, it is logical to use countries that have both data. Also, using an inner_join does not create NAs, which makes it easier to analyze. By joining, the number of observations in “MH_12” decreased from 549 to 405. However, the number of observations in “X2015” increased from 158 to 405 since “MH_12” had rows with repeated countries. There could be a potential problem from performing inner_join since some countries would be excluded from the study, and the analysis might not represent the true “global” trend.</p>
+</div>
+<div id="tidying" class="section level3">
+<h3>2) Tidying</h3>
+<pre class="r"><code>data&lt;-mine%&gt;%pivot_longer(c(&quot;2015&quot;,&quot;2010&quot;,&quot;2005&quot;,&quot;2000&quot;), names_to =&quot;year&quot;, values_to =&quot;suiciderate&quot;)
+glimpse(data)</code></pre>
+<pre><code>## Observations: 1,620
+## Variables: 15
+## $ Country                         &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afgh...
+## $ Sex                             &lt;chr&gt; &quot;Both sexes&quot;, &quot;Both sexes&quot;, &quot;Both s...
+## $ Region                          &lt;chr&gt; &quot;Southern Asia&quot;, &quot;Southern Asia&quot;, &quot;...
+## $ `Happiness Rank`                &lt;dbl&gt; 153, 153, 153, 153, 153, 153, 153, ...
+## $ `Happiness Score`               &lt;dbl&gt; 3.575, 3.575, 3.575, 3.575, 3.575, ...
+## $ `Standard Error`                &lt;dbl&gt; 0.03084, 0.03084, 0.03084, 0.03084,...
+## $ `Economy (GDP per Capita)`      &lt;dbl&gt; 0.31982, 0.31982, 0.31982, 0.31982,...
+## $ Family                          &lt;dbl&gt; 0.30285, 0.30285, 0.30285, 0.30285,...
+## $ `Health (Life Expectancy)`      &lt;dbl&gt; 0.30335, 0.30335, 0.30335, 0.30335,...
+## $ Freedom                         &lt;dbl&gt; 0.23414, 0.23414, 0.23414, 0.23414,...
+## $ `Trust (Government Corruption)` &lt;dbl&gt; 0.09719, 0.09719, 0.09719, 0.09719,...
+## $ Generosity                      &lt;dbl&gt; 0.36510, 0.36510, 0.36510, 0.36510,...
+## $ `Dystopia Residual`             &lt;dbl&gt; 1.95210, 1.95210, 1.95210, 1.95210,...
+## $ year                            &lt;chr&gt; &quot;2015&quot;, &quot;2010&quot;, &quot;2005&quot;, &quot;2000&quot;, &quot;20...
+## $ suiciderate                     &lt;dbl&gt; 7.1, 7.0, 7.3, 6.7, 10.9, 11.1, 11....</code></pre>
+<p>I made the joined data tidy by using pivot_longer(). Thus, the variables “2015”, “2010”, “2005”, and “2000” were combined as one under the name “year”. The values were assigned to the column “suiciderate”. This increased the number of observations from 405 to 1620, and decreased the number of variables from 17 to 15.</p>
+</div>
+<div id="wrangling" class="section level3">
+<h3>3) Wrangling</h3>
+<pre class="r"><code>data%&gt;%filter(year==2015)%&gt;%select(Country, Sex, &quot;Happiness Score&quot;, suiciderate)%&gt;%mutate(rate=row_number(suiciderate))</code></pre>
+<pre><code>## # A tibble: 405 x 5
+##    Country     Sex        `Happiness Score` suiciderate  rate
+##    &lt;chr&gt;       &lt;chr&gt;                  &lt;dbl&gt;       &lt;dbl&gt; &lt;int&gt;
+##  1 Afghanistan Both sexes              3.58         7.1   170
+##  2 Afghanistan Male                    3.58        10.9   250
+##  3 Afghanistan Female                  3.58         3.1    46
+##  4 Albania     Both sexes              4.96         3.8    63
+##  5 Albania     Male                    4.96         5.3   109
+##  6 Albania     Female                  4.96         2.4    27
+##  7 Algeria     Both sexes              5.60         3.1    47
+##  8 Algeria     Male                    5.60         5      99
+##  9 Algeria     Female                  5.60         1.3     8
+## 10 Angola      Both sexes              4.03        25.9   384
+## # ... with 395 more rows</code></pre>
+<pre class="r"><code>data%&gt;%filter(year==2015)%&gt;%group_by(Sex)%&gt;%summarize(meansuicide=mean(suiciderate))%&gt;%arrange(desc(meansuicide))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   Sex        meansuicide
+##   &lt;chr&gt;            &lt;dbl&gt;
+## 1 Male             16.3 
+## 2 Both sexes       10.5 
+## 3 Female            5.21</code></pre>
+<pre class="r"><code>data%&gt;%group_by(Country,Sex)%&gt;%summarize(sdsuicide=sd(suiciderate))</code></pre>
+<pre><code>## # A tibble: 405 x 3
+## # Groups:   Country [135]
+##    Country     Sex        sdsuicide
+##    &lt;chr&gt;       &lt;chr&gt;          &lt;dbl&gt;
+##  1 Afghanistan Both sexes     0.250
+##  2 Afghanistan Female         0.337
+##  3 Afghanistan Male           0.379
+##  4 Albania     Both sexes     1.28 
+##  5 Albania     Female         0.506
+##  6 Albania     Male           2.10 
+##  7 Algeria     Both sexes     0.289
+##  8 Algeria     Female         0.499
+##  9 Algeria     Male           0.275
+## 10 Angola      Both sexes     1.08 
+## # ... with 395 more rows</code></pre>
+<pre class="r"><code>data%&gt;%select(-Sex, -Region, -&quot;Happiness Rank&quot;, -&quot;Standard Error&quot;, -year, -suiciderate)%&gt;%
+  distinct()%&gt;%rename(happyscore=&quot;Happiness Score&quot;, Economy=&quot;Economy (GDP per Capita)&quot;, Health=&quot;Health (Life Expectancy)&quot;, Trust=&quot;Trust (Government Corruption)&quot;, Dystopia=&quot;Dystopia Residual&quot;)%&gt;%
+  summarize(var(Family), min(Economy), max(Health), n_distinct(Trust), IQR(happyscore), median(Family), first(Family))</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##   `var(Family)` `min(Economy)` `max(Health)` `n_distinct(Tru~ `IQR(happyscore~
+##           &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;            &lt;int&gt;            &lt;dbl&gt;
+## 1        0.0788         0.0153          1.03              134             1.77
+## # ... with 2 more variables: `median(Family)` &lt;dbl&gt;, `first(Family)` &lt;dbl&gt;</code></pre>
+<pre class="r"><code>data%&gt;%rename(happyscore=&quot;Happiness Score&quot;)%&gt;%
+  select(happyscore, suiciderate)%&gt;%cor()</code></pre>
+<pre><code>##             happyscore suiciderate
+## happyscore   1.0000000  -0.0924696
+## suiciderate -0.0924696   1.0000000</code></pre>
+<p>Here, I used all six dplyr functions filter(), select(), mutate(), group_by(), summarize(), and arrange(). Also, ten summary statistics were made using mean(), sd(), var(), min(), max(), n_distinct(), IQR(), median(), first(), and cor().
+The first code filtered data from 2015, selected only the important columns (country, sex, happiness score, suicide rate), and created another column named “rate” to show the ranks of suicide rates from lowest to highest. The second code also filtered for year 2015, grouped by sex, summarized to find the mean of suicide rates, and arranged them in order from greatest mean suicide rate to lowest mean suicide rate. The third code grouped by two categorical variables (country, sex) and summarized to find standard deviation of suicide rates. The fourth code focused on summary statistics of various factors contributing to happiness score. The last code showed the correlation between happiness score and suicide rate, which came out to be around -10%.</p>
+</div>
+<div id="visualizing" class="section level3">
+<h3>4) Visualizing</h3>
+<div id="scatter-plot" class="section level5">
+<h5>Scatter Plot</h5>
+<pre class="r"><code>data%&gt;%rename(Happiness_Score=&quot;Happiness Score&quot;)%&gt;%ggplot(aes(suiciderate,Happiness_Score))+
+  geom_point(aes(color=Region), size=1, alpha=.8)+
+  ggtitle(&quot;Suicide Rate vs. Happiness Score&quot;)+ylab(&quot;Happiness Score&quot;)+xlab(&quot;Suicide Rate&quot;)+
+  scale_x_continuous(breaks = seq(0, 80, by = 5))+
+  scale_y_continuous(breaks = seq(2, 8, by = .5))+
+  theme_minimal()+scale_color_brewer(palette=&quot;Paired&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This is a scatterplot of suicide rate and happiness score with each region in different color. There is no apparent correlation between suicide rate and happiness score since most points run vertically. However, it seems like Western Europe countries and Latin America/Caribbean countries are clustered at the top with higher happiness score, while Sub-Saharan African countries are clustered at the bottom with lower happiness score. Central and Eastern European countries seem to have high suicide rates even though their happiness score is slightly above average. Latin America/Caribbean, Eastern Asia, and Southern Asia also have few countries with high suicide rates. However, it is interesting to note that these regions with high suicide rates have varying happiness scores.</p>
+</div>
+<div id="bar-plot" class="section level5">
+<h5>Bar Plot</h5>
+<pre class="r"><code>data%&gt;%
+  ggplot(aes(Region,suiciderate, fill=Sex))+geom_bar(stat=&quot;summary&quot;, fun.y=&quot;mean&quot;, position=&quot;dodge&quot;)+
+  coord_flip()+
+  ggtitle(&quot;Suicide Rate vs. Region&quot;)+xlab(&quot;Region&quot;)+ylab(&quot;Average Suicide Rate&quot;)+theme_classic()+ scale_fill_brewer(palette=&quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>This is a bar plot of average suicide rates in differenct regions divided up by sex. This shows that males have higher average suicide rates compared to females in all regions. Region with lowest average suicide rates is Middle East and Northern Africa, and region with the highest average suicide rates is Eastern Asia. Regions like Central and Eastern Europe show big difference in average suicide rates between sex where males have much higher average suicide rates compared to females. Other regions like Middle East to Northern Africa does not show as much difference in sex.</p>
+</div>
+</div>
+<div id="pca" class="section level3">
+<h3>5) PCA</h3>
+<pre class="r"><code>data1&lt;-data%&gt;%select(-&quot;Happiness Rank&quot;,-&quot;Happiness Score&quot;, -&quot;Standard Error&quot;, -year, -suiciderate, -Sex, -&quot;Dystopia Residual&quot;)%&gt;%distinct()
+data_nums&lt;-data1%&gt;%select_if(is.numeric)%&gt;%scale
+rownames(data_nums)&lt;-data1$Country
+data_pca&lt;-princomp(data_nums)
+names(data_pca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(data_pca, loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
+## Standard deviation     1.7108699 1.1255388 0.8680951 0.69721981 0.61097083
+## Proportion of Variance 0.4914866 0.2127153 0.1265355 0.08162386 0.06267851
+## Cumulative Proportion  0.4914866 0.7042019 0.8307374 0.91236124 0.97503975
+##                            Comp.6
+## Standard deviation     0.38555431
+## Proportion of Variance 0.02496025
+## Cumulative Proportion  1.00000000
+## 
+## Loadings:
+##                               Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6
+## Economy (GDP per Capita)       0.496  0.363         0.192         0.764
+## Family                         0.456  0.196 -0.292 -0.572  0.524 -0.258
+## Health (Life Expectancy)       0.474  0.300 -0.121  0.510 -0.312 -0.560
+## Freedom                        0.417 -0.410        -0.465 -0.659       
+## Trust (Government Corruption)  0.335 -0.343  0.775  0.144  0.360 -0.136
+## Generosity                     0.186 -0.674 -0.544  0.373  0.251  0.114</code></pre>
+<pre class="r"><code>eigval&lt;-data_pca$sdev^2
+round(cumsum(eigval)/sum(eigval),2) </code></pre>
+<pre><code>## Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 
+##   0.49   0.70   0.83   0.91   0.98   1.00</code></pre>
+<pre class="r"><code>eigval</code></pre>
+<pre><code>##    Comp.1    Comp.2    Comp.3    Comp.4    Comp.5    Comp.6 
+## 2.9270759 1.2668375 0.7535891 0.4861155 0.3732854 0.1486521</code></pre>
+<p>In order to do a principal component analysis, I first prepared the data by dropping irrelevant variables and scaling the numeric data. Then, I used the princomp function to calculate the principal components. The data shows that 49% of the variance is explained by principal component 1 (PC1) and 21% of the variance is explained by principal component 2 (PC2). Also, the loadings show a general strength where higher score on PC1 means lower values in individual components of happiness score. Also, higher score on PC2 means higher generosity, freedom, and trust scores, but lower economy, family, and health scores. Although PC1 and PC2 only accounts for only 70% of variance cumulatively, I decided to keep only these two since they are the ones with eigenvalues greater than 1 (Kaiser’s rule).</p>
+<div id="visualization" class="section level4">
+<h4>Visualization</h4>
+<pre class="r"><code>datadf&lt;-data.frame(PC1=data_pca$scores[,1], PC2=data_pca$scores[,2],Region=data$Region)
+ggplot(datadf,aes(PC1, PC2, color=Region))+geom_point()+scale_color_brewer(palette=&quot;Paired&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>data_pca$loadings[1:6,1:2]%&gt;%as.data.frame%&gt;%rownames_to_column%&gt;%
+  ggplot()+geom_hline(aes(yintercept=0),lty=2)+
+  geom_vline(aes(xintercept=0),lty=2)+ylab(&quot;PC2&quot;)+xlab(&quot;PC1&quot;)+
+  geom_segment(aes(x=0,y=0,xend=Comp.1,yend=Comp.2),arrow=arrow(),col=&quot;red&quot;)+
+  geom_label(aes(x=Comp.1*0.85,y=Comp.2*1.0,label=rowname))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>The scatterplot of PC1 against PC2 color coded by region shows that more variance is explained by PC1 compared to PC2. However, there is no cluster of points based on region, which shows that there isn’t much correlation between regions and principal components. The plot of loadings on the bottom shows the vector of each variable. This shows that Family, Health, and Economy are higly correlated (small angles between them). Also, Freedom and Trust is highly correlated. This means that countries that have more freedom have higher trust in their government. Also countries with good ecomony also have high life expectancies and happier families. Another interesting point is that countries with good economy, health, and family have lower freedom, trust and generosity.</p>
+</div>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

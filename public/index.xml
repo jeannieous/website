@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Chris Turner</title>
+    <title>Jeannie Hong</title>
     <link>/</link>
-    <description>Recent content on Chris Turner</description>
+    <description>Recent content on Jeannie Hong</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
+    <lastBuildDate>Sun, 24 Nov 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Project 2</title>
+      <link>/project2/</link>
+      <pubDate>Sun, 24 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>0) IntroductionThe dataset that I have chosen for this project is the Fitness Trends dataset (25.csv), which was found on kaggle.com. It contains 7 variables (date, step_count, mood, calories_burned, hours_of_sleep, bool_of_active, weight_kg) and 96 observations. The dataset gives information about feeling active based on number of steps walked, mood, calories burned, hourse of sleep, and weight. I thought this dataset was interesting to look at since excersing is often used as a treatment for people who feel lethargic.</description>
+    </item>
+    
+    <item>
+      <title>Project 1</title>
+      <link>/project1/</link>
+      <pubDate>Thu, 17 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>0) IntroductionThe two datasets that I have chosen for this project is the Global Suicide Data (MH_12) and World Happiness Report (X2015), which were both found on kaggle.com. The Global Suicide Data contains 6 variables (Country, Sex, 2015, 2010, 2005, 2000) and 549 observations. It gives you the age-adjusted suicide rate (per 100,000) in different countries based on year and sex. The World Happiness Report contains 12 variables (Country, Region, Happiness rank, Happiness score, Standard Error, Economy, Family, Health, Freedom, Trust, Generosity, Dystopia residual) and 158 observations.</description>
+    </item>
     
     <item>
       <title>Projects</title>
@@ -17,7 +35,10 @@
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
       
       <guid>/projects/</guid>
-      <description></description>
+      <description>Projects Hello! Check out some projects I have been working on:
+  Project 1
+  Project 2
+  </description>
     </item>
     
     <item>
@@ -26,9 +47,10 @@
       <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
       
       <guid>/blog/2015-07-23-r-rmarkdown/</guid>
-      <description>R MarkdownThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+      <description>Link to project 1
+R MarkdownThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.Link to project 2
 You can embed an R code chunk like this:
-summary(cars)## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+summary(cars)## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.</description>
     </item>
     
     <item>
