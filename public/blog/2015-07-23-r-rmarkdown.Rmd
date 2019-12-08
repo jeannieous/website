@@ -10,7 +10,7 @@ tags: ["R Markdown", "plot", "regression"]
 knitr::opts_chunk$set(collapse = TRUE)
 ```
 
-[Link to project 1](/Project1)
+[](/img/pythonbanner.png)
 
 # R Markdown
 

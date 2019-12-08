@@ -7,10 +7,10 @@ tags:
 - projects
 title: Projects
 ---
-## Projects 
+>## Projects 
 
-Hello! Check out some projects I have been working on:
+>Hello! Check out some projects I have been working on:
 
-- [Project 1](/Project1/)
+>- [Project 1](/Project1/)
 
-- [Project 2](/Project2/)
+>- [Project 2](/Project2/)

@@ -1,8 +1,8 @@
 {
-    "path" : "C:/Users/Jeannie H/Desktop/website/content/blog",
+    "path" : "C:/Users/Jeannie H/Desktop/website/public/css",
     "sortOrder" : [
         {
-            "ascending" : true,
+            "ascending" : false,
             "columnIndex" : 2
         }
     ]
