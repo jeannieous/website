@@ -37,7 +37,7 @@ title: Resume
 >### **Accomplishments**
 >**Distinguished College Scholars**, 2018,2019
 >### **Skills**
->Lab Skills
+>Lab Skills\
 >- Handling and training rats under Pavlovian appetitive conditioning protocol\
 >- Performing a vaginal lavage technique to determine estrous cycle of female rats\
 >- Histological techniques such as tissue mounting\
