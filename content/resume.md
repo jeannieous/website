@@ -24,22 +24,22 @@ title: Resume
 >- Study the effects of estrogen level of female rats in renewal of appetitive behavior. 
 >- Histological techniques such as tissue mounting
 >- Performing a vaginal lavage technique to determine estrous cycle of female rats 
->- Microscopic imaging technique for anatomical and cellular analyses
-
+>- Microscopic imaging technique for anatomical and cellular analyses\
 >**Teaching Assistanct - Organic Chemistry Lab**, January 7, 2017 – January 13, 2017\
->*University of Texas at Austin*
+>*University of Texas at Austin*\
 >### **Interests**
->I have interest in addiction studies, with specific focuses on:
->- Effect of context on renewal of addiction
->- Sex differences in addiction
->- Effect of female endogenous hormones on addiction
->- Role of nucleus accumbens on addiction
+>I have interest in addiction studies, with specific focuses on:\
+>- Effect of context on renewal of addiction\
+>- Sex differences in addiction\
+>- Effect of female endogenous hormones on addiction\
+>- Role of nucleus accumbens on addiction\
 >### **Accomplishments**
->**Distinguished College Scholars**, 2018,2019
->### **Skills**
+>**Distinguished College Scholars**, 2018,2019\
+>### **Skills**\
 >Lab Skills\
 >- Handling and training rats under Pavlovian appetitive conditioning protocol\
->- Performing a vaginal lavage technique to determine estrous cycle of female rats\
+>- Performing a vaginal lavage technique to determine estrous cycle of f
+emale rats\
 >- Histological techniques such as tissue mounting\
 >- Microscopic imaging technique for anatomical and cellular analyses\
 >- Polymerase chain reaction, gel electrophoresis, organic extraction, and bioassay
