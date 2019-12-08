@@ -4,7 +4,7 @@ html, body {
   background-color: #fff;
   font-family: 'Source Sans Pro', sans-serif;
   /* The html and body elements cannot have any padding or margin. */
-  border-top: 3px solid #8978de;
+  border-top: 3px solid #27A822;
 }
 
 /* Wrapper for page content to push down footer */
@@ -27,26 +27,26 @@ html, body {
   border-color: #ffffff;
 }
 .navbar-default .navbar-brand {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-text {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-  color: #8978de;
+  color: #6b6b6b;
   background-color: #ffffff;
 }
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-  color: #8978de;
+  color: #6b6b6b;
   background-color: #ffffff;
 }
 .navbar-default .navbar-toggle {
@@ -56,27 +56,27 @@ html, body {
   background-color: #ffffff;
 }
 .navbar-default .navbar-toggle .icon-bar {
-  background-color: #8978de;
+  background-color: #6b6b6b;
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #8978de;
+  border-color: #6b6b6b;
 }
 .navbar-default .navbar-link {
-  color: #8978de;
+  color: #6b6b6b;
 }
 .navbar-default .navbar-link:hover {
-  color: #8978de;
+  color: #6b6b6b;
 }
 @media (max-width: 767px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: #8978de;
+    color: #6b6b6b;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-    color: #8978de;
+    color: #6b6b6b;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #8978de;
+    color: #6b6b6b;
     background-color: #ffffff;
   }
 }
@@ -91,10 +91,10 @@ html, body {
   margin: 20px 0;
 }
 .container a {
-  color: #8978de;
+  color: #27A822;
 }
 .container a:hover {
-  color: #8978de;
+  color: #267723;
 }
 .container p img, .img-responsive {
   display: block;
@@ -116,10 +116,10 @@ html, body {
   font-size: 15px;
 }
 .panel-default h4 a, h5 a {
-  color: #8978de;
+  color: #27A822;
 }
 .panel-default h4 a:hover, h5 a:hover {
-  color: #8978de;
+  color: #267723;
 }
 .panel{
   border-style: none;
@@ -186,10 +186,10 @@ html, body {
   text-decoration: none !important;
 }
 .text-muted {
-	color: #8978de;
+	color: #6b6b6b;
 }
 div.footer{
-  border-bottom: 5px solid #8978de;;
+  border-bottom: 5px solid #27A822;;
 }
 /* Set the fixed height of the footer here */
 /*.footer {

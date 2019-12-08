@@ -38,8 +38,8 @@ title: Resume
 >**Distinguished College Scholars**, 2018,2019
 >### **Skills**
 >Lab Skills
->- Handling and training rats under Pavlovian appetitive conditioning protocol
->- Performing a vaginal lavage technique to determine estrous cycle of female rats
->- Histological techniques such as tissue mounting
->- Microscopic imaging technique for anatomical and cellular analyses
+>- Handling and training rats under Pavlovian appetitive conditioning protocol\
+>- Performing a vaginal lavage technique to determine estrous cycle of female rats\
+>- Histological techniques such as tissue mounting\
+>- Microscopic imaging technique for anatomical and cellular analyses\
 >- Polymerase chain reaction, gel electrophoresis, organic extraction, and bioassay
