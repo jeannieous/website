@@ -17,7 +17,6 @@ Let's look at some examples of regex!
 
 ```{r}
 library(reticulate)
-#use_python("/usr/local/bin/python3")
 ```
 ```{python}
 import re
