@@ -2,7 +2,7 @@
 html, body {
   height: 100%;
   background-color: #fff;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Comic Sans', 'Comic Sans MS', cursive;
   /* The html and body elements cannot have any padding or margin. */
   border-top: 3px solid #4bc4c0;
 }
