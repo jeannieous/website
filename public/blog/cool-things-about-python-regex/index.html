@@ -87,27 +87,7 @@ re.findall(r&quot;\d+&quot;, string1)
 
 #In order to pull all numbers from string 1, &quot;\d+&quot; was used. \d codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.</code></pre>
 <pre><code>## [&#39;12&#39;, &#39;47&#39;, &#39;48&#39;, &#39;189&#39;, &#39;2036&#39;, &#39;314&#39;, &#39;125&#39;, &#39;789&#39;, &#39;1450&#39;, &#39;564&#39;, &#39;90456&#39;, &#39;7890&#39;]</code></pre>
-<p>Let’s look at one more exmaple!</p>
-<pre class="python"><code>string3=r&quot;Fedora Core       ftp     \
-Fedora Extras   http    ftp     rsync\
-          ftp://ftp7.br.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp3.de.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp.is.FreeBSD.org/pub/FreeBSD/ (ftp / rsync)\
-          ftp://ftp4.jp.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp.no.FreeBSD.org/pub/FreeBSD/ (ftp / rsync)\
-        *\
-          ftp://ftp3.no.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp.pt.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp1.ro.FreeBSD.org/pub/FreeBSD/ (ftp / ftpv6)\
-          ftp://ftp3.es.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp2.tw.FreeBSD.org/pub/FreeBSD/ (ftp / ftpv6 / http / httpv6 / rsync / rsyncv6)\
-          ftp://ftp6.uk.FreeBSD.org/pub/FreeBSD/ (ftp)\
-          ftp://ftp6.us.FreeBSD.org/pub/FreeBSD/ (ftp / http)&quot;
-
-re.findall(r&quot;ftp://ftp\d*.\w\w.FreeBSD.org/pub/FreeBSD/&quot;,string3)
-
-#In order to pull all FTP addresses from this string, the parts that are different in each address is coded by regex syntax. The different parts were matched by &quot;ftp\d*.\w\w&quot;, where \d* catches any numbers 0 or more times, and \w\w coded for any two alphanumerics. </code></pre>
-<pre><code>## [&#39;ftp://ftp7.br.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp3.de.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp.is.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp4.jp.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp.no.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp3.no.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp.pt.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp1.ro.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp3.es.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp2.tw.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp6.uk.FreeBSD.org/pub/FreeBSD/&#39;, &#39;ftp://ftp6.us.FreeBSD.org/pub/FreeBSD/&#39;]</code></pre>
+In order to pull all numbers from string 1, <code>\d+</code> was used. 
 </div>
 
               <hr>

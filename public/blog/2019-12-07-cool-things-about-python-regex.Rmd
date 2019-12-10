@@ -28,7 +28,7 @@ re.findall(r"\d+", string1)
 
 #In order to pull all numbers from string 1, "\d+" was used. \d codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.
 ```
-
+In order to pull all numbers from string 1, `\d+` was used. \d codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.
 
 Let's look at one more exmaple!
 ```{python}
