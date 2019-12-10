@@ -8,7 +8,7 @@ tags:
 title: Resume
 ---
 >## Jeannie Hong
->- I am an undergraduate biology student at University of Texas at Austin. I am in the health science scholars honors program in the college of natural sciences. My research focuses on studying the effects of female endogenous hormone on relapse of drug use, with particular focus on activation of nucleus accumbens. I enjoy watching horror movies and musicals in my free time./
+>- I am an undergraduate biology student at University of Texas at Austin. I am in the health science scholars honors program in the college of natural sciences. My research focuses on studying the effects of female endogenous hormone on relapse of drug use, with particular focus on activation of nucleus accumbens. I enjoy watching horror movies and musicals in my free time.
 >### **Link**
 >- [Git Hub](https://github.com/jeannieous)
 >### **Education**
