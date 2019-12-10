@@ -25,10 +25,8 @@ import re
 string1="We have to extract these numbers 12, 47, 48 The integers numbers are also interesting: 189 2036 314\',\' is a separator, so please extract these numbers 125,789,1450 and also these 564,90456 We like to offer you 7890$ per month in order to complete this task... we are joking"
 
 re.findall(r"\d+", string1)
-
-#In order to pull all numbers from string 1, "\d+" was used. \d codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.
 ```
-In order to pull all numbers from string 1, `\d+` was used. \d codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.
+In order to pull all numbers from string 1, `\d+` was used. `\d` codes for any digits from 0 to 9. Therefore, the first digit from any number is pulled by this. Then, + is added to match any digits 1 or more times.
 
 Let's look at one more exmaple!
 ```{python}
@@ -49,6 +47,5 @@ Fedora Extras 	http 	ftp 	rsync\
           ftp://ftp6.us.FreeBSD.org/pub/FreeBSD/ (ftp / http)"
 
 re.findall(r"ftp://ftp\d*.\w\w.FreeBSD.org/pub/FreeBSD/",string3)
-
-#In order to pull all FTP addresses from this string, the parts that are different in each address is coded by regex syntax. The different parts were matched by "ftp\d*.\w\w", where \d* catches any numbers 0 or more times, and \w\w coded for any two alphanumerics. 
 ```
+In order to pull all FTP addresses from this string, the parts that are different in each address is coded by regex syntax. The different parts were matched by "ftp`\d*`.`\w\w`", where `\d`* catches any numbers 0 or more times, and `\w\w` coded for any two alphanumerics.
